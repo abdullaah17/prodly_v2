@@ -1,4 +1,8 @@
 #include "../include/AuditEngine.h"
-#include <iostream>
+#include <fstream>
 
-void AuditEngine::recordEvent(const char* e) { std::cout << "Audit: " << e << std::endl; }
+void AuditEngine::log(const std::string& event) {
+	std::ofstream out("integration/output/audit.txt", std::ios::app);
+	out << event << "\n";
+	out.close();
+}

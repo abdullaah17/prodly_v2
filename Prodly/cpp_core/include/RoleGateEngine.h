@@ -1,9 +1,11 @@
-#ifndef ROLEGATE_ENGINE_H
-#define ROLEGATE_ENGINE_H
+#ifndef ROLE_GATE_ENGINE_H
+#define ROLE_GATE_ENGINE_H
+
+#include <string>
 
 class RoleGateEngine {
 public:
-    bool allowRole(const char* role);
+    bool isEligible(int level, const std::string& role);
 };
 
-#endif // ROLEGATE_ENGINE_H
+#endif

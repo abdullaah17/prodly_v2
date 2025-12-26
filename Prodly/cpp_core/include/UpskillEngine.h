@@ -1,9 +1,12 @@
 #ifndef UPSKILL_ENGINE_H
 #define UPSKILL_ENGINE_H
 
+#include <queue>
+#include <string>
+
 class UpskillEngine {
 public:
-    void planUpskill();
+    bool reEvaluate(const std::queue<std::string>& completed);
 };
 
-#endif // UPSKILL_ENGINE_H
+#endif

@@ -1,4 +1,5 @@
 #include "../include/UpskillEngine.h"
-#include <iostream>
 
-void UpskillEngine::planUpskill() { std::cout << "Planning upskill\n"; }
+bool UpskillEngine::reEvaluate(const std::queue<std::string>& completed) {
+	return completed.size() >= 3;
+}

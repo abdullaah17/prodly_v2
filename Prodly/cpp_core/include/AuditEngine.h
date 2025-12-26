@@ -1,9 +1,12 @@
 #ifndef AUDIT_ENGINE_H
 #define AUDIT_ENGINE_H
 
+#include <queue>
+#include <string>
+
 class AuditEngine {
 public:
-    void recordEvent(const char* e);
+    void log(const std::string& event);
 };
 
-#endif // AUDIT_ENGINE_H
+#endif
