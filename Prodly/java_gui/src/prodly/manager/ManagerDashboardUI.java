@@ -1,33 +1,40 @@
 package prodly.manager;
 
-import prodly.audit.AuditLogUI;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
-import javax.swing.*;
-
-public class ManagerDashboardUI extends JFrame {
+public class ManagerDashboardUI extends VBox {
 
     public ManagerDashboardUI() {
-        setTitle("Manager Dashboard");
+        setPadding(new Insets(30));
+        setSpacing(25);
 
-        String[][] data = {
-                {"Ahsan", "L3", "Low"},
-                {"Ali", "L2", "High"}
-        };
+        GridPane grid = new GridPane();
+        grid.setHgap(20);
 
-        String[] cols = {"Employee", "Level", "Risk"};
+        grid.add(card("Utilization", "78%"), 0, 0);
+        grid.add(card("At-Risk Hires", "2"), 1, 0);
+        grid.add(card("Avg Ramp-Up", "21 days"), 2, 0);
 
-        JTable table = new JTable(data, cols);
-        JButton audit = new JButton("View Audit Log");
+        getChildren().add(grid);
+    }
 
-        audit.addActionListener(e -> {
-            dispose();
-            new AuditLogUI();
-        });
+    private VBox card(String title, String value) {
+        VBox c = new VBox(8);
+        c.setPadding(new Insets(20));
+        c.setStyle("""
+            -fx-background-color: white;
+            -fx-background-radius: 12;
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1),12,0,0,4);
+        """);
 
-        add(new JScrollPane(table), "Center");
-        add(audit, "South");
+        Label t = new Label(title);
+        Label v = new Label(value);
+        v.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
 
-        setSize(400,250);
-        setVisible(true);
+        c.getChildren().addAll(t, v);
+        return c;
     }
 }

@@ -1,30 +1,23 @@
 package prodly.audit;
 
-import javax.swing.*;
-import java.io.*;
+import javafx.geometry.Insets;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 
-public class AuditLogUI extends JFrame {
+public class AuditLogUI extends VBox {
 
     public AuditLogUI() {
-        setTitle("Audit Log");
+        setPadding(new Insets(30));
 
-        JTextArea area = new JTextArea();
-        area.setEditable(false);
+        TextArea log = new TextArea();
+        log.setEditable(false);
+        log.setText("""
+        [10:02] Evaluation completed
+        [10:04] Level assigned: L3
+        [10:06] Role approved
+        [10:20] Task completed: Orientation
+        """);
 
-        try {
-            BufferedReader br = new BufferedReader(
-                    new FileReader("integration/output/audit.txt"));
-            String line;
-            while ((line = br.readLine()) != null)
-                area.append(line + "\n");
-            br.close();
-        } catch (Exception e) {
-            area.setText("No audit records found.");
-        }
-
-        add(new JScrollPane(area));
-
-        setSize(400,300);
-        setVisible(true);
+        getChildren().add(log);
     }
 }

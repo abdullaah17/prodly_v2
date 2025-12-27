@@ -9,7 +9,8 @@ public class CppBridge {
         fw.write(dsa + " " + oop + " " + db);
         fw.close();
 
-        Process p = Runtime.getRuntime().exec("prodly_core");
+        ProcessBuilder pb = new ProcessBuilder("prodly_core");
+        Process p = pb.start();
         p.waitFor();
 
         BufferedReader br = new BufferedReader(

@@ -1,37 +1,51 @@
 package prodly.onboarding;
 
-import prodly.upskilling.ReEvaluationUI;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-import javax.swing.*;
+public class TaskBoardUI extends HBox {
 
-public class TaskBoardUI extends JFrame {
+    public TaskBoardUI() {
+        setPadding(new Insets(25));
+        setSpacing(20);
 
-    public TaskBoardUI(boolean eligible) {
-        setTitle("Task Board");
+        getChildren().addAll(
+            column("Pre-boarding"),
+            column("First Day"),
+            column("First Week"),
+            column("First Month")
+        );
+    }
 
-        DefaultListModel<String> model = new DefaultListModel<>();
+    private VBox column(String title) {
+        VBox col = new VBox(12);
+        col.setPrefWidth(260);
+        col.setPadding(new Insets(15));
+        col.setStyle("""
+            -fx-background-color: #f1f5f9;
+            -fx-background-radius: 12;
+        """);
 
-        if (eligible) {
-            model.addElement("Company Introduction");
-            model.addElement("Tool Setup");
-        } else {
-            model.addElement("DSA Practice");
-            model.addElement("OOP Revision");
-            model.addElement("Re-Test");
-        }
+        col.getChildren().addAll(
+            new Label(title),
+            task("Offer Acceptance"),
+            task("Orientation"),
+            task("Role Training")
+        );
 
-        JList<String> list = new JList<>(model);
-        JButton complete = new JButton("Complete Tasks");
+        return col;
+    }
 
-        complete.addActionListener(e -> {
-            dispose();
-            new ReEvaluationUI();
-        });
-
-        add(new JScrollPane(list), "Center");
-        add(complete, "South");
-
-        setSize(300,250);
-        setVisible(true);
+    private Label task(String text) {
+        Label t = new Label(text);
+        t.setStyle("""
+            -fx-background-color: white;
+            -fx-padding: 10;
+            -fx-background-radius: 8;
+            -fx-border-color: #e5e7eb;
+        """);
+        return t;
     }
 }
