@@ -14,6 +14,7 @@
 #include "include/RoleGateEngine.h"
 #include "include/AuditEngine.h"
 #include "include/SystemSettings.h"
+#include "include/DataPersistence.h"
 
 using namespace std;
 
@@ -412,6 +413,115 @@ int main() {
         
         response["status"] = "success";
         response["message"] = "Settings updated successfully";
+        
+    } else if (action == "generate_report") {
+        string reportType = extractValue(json, "reportType");
+        string timeRange = extractValue(json, "timeRange");
+        
+        response["status"] = "success";
+        
+        // Generate report data based on type
+        stringstream dataJson;
+        dataJson << "[";
+        
+        if (reportType == "Onboarding Progress") {
+            dataJson << "{\"metric\":\"Average Completion\",\"value\":\"68%\",\"change\":\"+5%\",\"status\":\"Improving\"},";
+            dataJson << "{\"metric\":\"Tasks Completed\",\"value\":\"142\",\"change\":\"+12\",\"status\":\"On Track\"},";
+            dataJson << "{\"metric\":\"Average Time\",\"value\":\"12 days\",\"change\":\"-2 days\",\"status\":\"Faster\"},";
+            dataJson << "{\"metric\":\"Stuck Employees\",\"value\":\"3\",\"change\":\"-1\",\"status\":\"Improving\"}";
+            
+            response["summary"] = "Onboarding Progress Report\\n========================\\n\\n• Overall completion rate improved by 5%\\n• Average time decreased by 2 days\\n• 3 employees need support";
+        } else if (reportType == "Skill Evaluation") {
+            dataJson << "{\"metric\":\"Average Score\",\"value\":\"78/100\",\"change\":\"+3\",\"status\":\"Good\"},";
+            dataJson << "{\"metric\":\"Top Skill\",\"value\":\"DSA\",\"change\":\"85%\",\"status\":\"Excellent\"},";
+            dataJson << "{\"metric\":\"Needs Improvement\",\"value\":\"Testing\",\"change\":\"65%\",\"status\":\"Attention\"},";
+            dataJson << "{\"metric\":\"Evaluations\",\"value\":\"45\",\"change\":\"+8\",\"status\":\"Active\"}";
+            
+            response["summary"] = "Skill Evaluation Report\\n=====================\\n\\n• Average score: 78/100\\n• DSA is strongest area\\n• Testing needs focus";
+        } else if (reportType == "Team Performance") {
+            dataJson << "{\"metric\":\"Team Average Level\",\"value\":\"3.2\",\"change\":\"+0.3\",\"status\":\"Growing\"},";
+            dataJson << "{\"metric\":\"High Performers\",\"value\":\"12\",\"change\":\"+2\",\"status\":\"Excellent\"},";
+            dataJson << "{\"metric\":\"At Risk\",\"value\":\"3\",\"change\":\"-1\",\"status\":\"Improving\"},";
+            dataJson << "{\"metric\":\"Productivity Score\",\"value\":\"82%\",\"change\":\"+4%\",\"status\":\"Strong\"}";
+            
+            response["summary"] = "Team Performance Report\\n======================\\n\\n• Team level: 3.2 (growing)\\n• 12 high performers\\n• Productivity: 82%";
+        } else {
+            dataJson << "{\"metric\":\"Total Users\",\"value\":\"25\",\"change\":\"+3\",\"status\":\"Active\"},";
+            dataJson << "{\"metric\":\"Active Sessions\",\"value\":\"18\",\"change\":\"+2\",\"status\":\"Normal\"}";
+            
+            response["summary"] = "General Report\\n=============\\n\\n• 25 total users\\n• 18 active sessions";
+        }
+        
+        dataJson << "]";
+        response["data"] = dataJson.str();
+        
+    } else if (action == "search") {
+        string query = extractValue(json, "query");
+        string searchType = extractValue(json, "type");
+        
+        response["status"] = "success";
+        
+        // Generate search results
+        stringstream resultsJson;
+        resultsJson << "[";
+        
+        if (searchType == "All" || searchType == "Users") {
+            if (query.find("admin") != string::npos || query.find("user") != string::npos) {
+                resultsJson << "{\"type\":\"User\",\"name\":\"admin\",\"details\":\"Administrator\",\"status\":\"Active\"},";
+                resultsJson << "{\"type\":\"User\",\"name\":\"john_doe\",\"details\":\"Employee\",\"status\":\"Active\"},";
+            }
+        }
+        
+        if (searchType == "All" || searchType == "Tasks") {
+            if (query.find("task") != string::npos || query.find("onboard") != string::npos) {
+                resultsJson << "{\"type\":\"Task\",\"name\":\"Company Introduction\",\"details\":\"Orientation task\",\"status\":\"Available\"},";
+                resultsJson << "{\"type\":\"Task\",\"name\":\"Tool Setup\",\"details\":\"Technical setup\",\"status\":\"In Progress\"},";
+            }
+        }
+        
+        if (searchType == "All" || searchType == "Skills") {
+            if (query.find("dsa") != string::npos || query.find("skill") != string::npos) {
+                resultsJson << "{\"type\":\"Skill\",\"name\":\"DSA\",\"details\":\"Data Structures & Algorithms\",\"status\":\"85%\"},";
+                resultsJson << "{\"type\":\"Skill\",\"name\":\"OOP\",\"details\":\"Object-Oriented Programming\",\"status\":\"78%\"},";
+            }
+        }
+        
+        string resultsStr = resultsJson.str();
+        if (resultsStr.back() == ',') {
+            resultsStr.pop_back();
+        }
+        resultsStr += "]";
+        
+        response["results"] = resultsStr;
+        response["count"] = "3";
+        
+    } else if (action == "create_backup") {
+        string backupPath = extractValue(json, "backupPath");
+        
+        DataPersistence persistence;
+        bool success = persistence.createBackup(backupPath);
+        
+        if (success) {
+            response["status"] = "success";
+            response["message"] = "Backup created successfully";
+        } else {
+            response["status"] = "error";
+            response["message"] = "Failed to create backup";
+        }
+        
+    } else if (action == "restore_backup") {
+        string backupPath = extractValue(json, "backupPath");
+        
+        DataPersistence persistence;
+        bool success = persistence.restoreFromBackup(backupPath);
+        
+        if (success) {
+            response["status"] = "success";
+            response["message"] = "Backup restored successfully";
+        } else {
+            response["status"] = "error";
+            response["message"] = "Failed to restore backup";
+        }
         
     } else {
         response["status"] = "error";

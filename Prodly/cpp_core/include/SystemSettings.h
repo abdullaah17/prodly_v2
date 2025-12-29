@@ -31,6 +31,9 @@ public:
     
     // Get all settings as map
     map<string, string> getAllSettings();
+    
+private:
+    void saveToFile();
 };
 
 #endif

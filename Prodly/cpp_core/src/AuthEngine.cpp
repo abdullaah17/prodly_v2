@@ -1,8 +1,42 @@
 #include "../include/AuthEngine.h"
+#include "../include/DataPersistence.h"
 #include <algorithm>
 
+void AuthEngine::saveUsersToFile() {
+    DataPersistence persistence;
+    unordered_map<string, UserData> userDataMap;
+    
+    // Convert User to UserData
+    for (const auto& pair : users) {
+        UserData userData;
+        userData.password = pair.second.password;
+        userData.role = pair.second.role;
+        userData.createdAt = "2024-01-01"; // Default
+        userDataMap[pair.first] = userData;
+    }
+    
+    persistence.saveUsers(userDataMap);
+}
+
 AuthEngine::AuthEngine() {
-    users["admin"] = {"admin123", "admin", "2024-01-01"};
+    // Try to load users from file
+    DataPersistence persistence;
+    unordered_map<string, UserData> loadedUsers;
+    
+    if (persistence.loadUsers(loadedUsers)) {
+        // Convert UserData to User
+        for (const auto& pair : loadedUsers) {
+            User user;
+            user.password = pair.second.password;
+            user.role = pair.second.role;
+            users[pair.first] = user;
+        }
+    } else {
+        // Default admin user if no data file
+        users["admin"] = {"admin123", "admin"};
+        // Save default user
+        saveUsersToFile();
+    }
 }
 
 bool AuthEngine::signup(const string& username, const string& password, const string& role, string& message) {
@@ -11,7 +45,11 @@ bool AuthEngine::signup(const string& username, const string& password, const st
         return false;
     }
 
-    users[username] = {password, role, "2024-01-01"}; // Simplified date
+    users[username] = {password, role};
+    
+    // Save to file
+    saveUsersToFile();
+    
     message = "User registered";
     return true;
 }
@@ -52,6 +90,10 @@ bool AuthEngine::deleteUser(const string& username, string& message) {
     }
     
     users.erase(username);
+    
+    // Save to file
+    saveUsersToFile();
+    
     message = "User deleted successfully";
     return true;
 }
@@ -63,6 +105,10 @@ bool AuthEngine::updateUserRole(const string& username, const string& newRole, s
     }
     
     users[username].role = newRole;
+    
+    // Save to file
+    saveUsersToFile();
+    
     message = "User role updated successfully";
     return true;
 }
@@ -74,6 +120,10 @@ bool AuthEngine::updateUserPassword(const string& username, const string& newPas
     }
     
     users[username].password = newPassword;
+    
+    // Save to file
+    saveUsersToFile();
+    
     message = "Password updated successfully";
     return true;
 }

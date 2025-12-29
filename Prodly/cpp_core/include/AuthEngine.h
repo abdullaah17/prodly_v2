@@ -30,6 +30,9 @@ public:
     bool userExists(const string& username);
     int getUserCount();
     int getUserCountByRole(const string& role);
+    
+private:
+    void saveUsersToFile();
 };
 
 #endif

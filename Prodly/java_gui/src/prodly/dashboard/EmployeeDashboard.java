@@ -7,6 +7,7 @@ import prodly.onboarding.OnboardingScreen;
 import prodly.evaluation.AssessmentUI;
 import prodly.leveling.LevelView;
 import prodly.upskilling.UpskillUI;
+import prodly.search.SearchUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,6 +34,7 @@ public class EmployeeDashboard extends JFrame {
     private JButton viewEvaluationButton;
     private JButton viewLevelButton;
     private JButton viewUpskillButton;
+    private JButton searchButton;
     
     public EmployeeDashboard(String username, String role) {
         this.username = username;
@@ -93,6 +95,7 @@ public class EmployeeDashboard extends JFrame {
         viewEvaluationButton = new JButton("Evaluation");
         viewLevelButton = new JButton("My Level");
         viewUpskillButton = new JButton("Upskill Recommendations");
+        searchButton = new JButton("Search");
         
         styleButton(refreshButton, new Color(70, 130, 180));
         styleButton(completeTaskButton, new Color(60, 179, 113));
@@ -100,6 +103,7 @@ public class EmployeeDashboard extends JFrame {
         styleButton(viewEvaluationButton, new Color(138, 43, 226));
         styleButton(viewLevelButton, new Color(30, 144, 255));
         styleButton(viewUpskillButton, new Color(220, 20, 60));
+        styleButton(searchButton, new Color(72, 61, 139));
     }
     
     private void styleButton(JButton button, Color bgColor) {
@@ -156,6 +160,8 @@ public class EmployeeDashboard extends JFrame {
         buttonPanel.add(viewEvaluationButton);
         buttonPanel.add(viewLevelButton);
         buttonPanel.add(viewUpskillButton);
+        buttonPanel.add(new JSeparator(SwingConstants.VERTICAL));
+        buttonPanel.add(searchButton);
         
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
@@ -181,6 +187,10 @@ public class EmployeeDashboard extends JFrame {
         
         viewUpskillButton.addActionListener(e -> {
             new UpskillUI(username, role).setVisible(true);
+        });
+        
+        searchButton.addActionListener(e -> {
+            new SearchUI(username, role).setVisible(true);
         });
     }
     

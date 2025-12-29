@@ -1,1 +1,1 @@
-{"message":"Login successful","role":"admin","status":"success","username":"admin"}
+{"message":"Invalid credentials","status":"error"}

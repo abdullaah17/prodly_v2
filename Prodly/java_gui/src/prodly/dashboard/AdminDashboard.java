@@ -6,6 +6,10 @@ import prodly.integration.OutputReader;
 import prodly.audit.AuditLogUI;
 import prodly.admin.UserManagementUI;
 import prodly.admin.SystemSettingsUI;
+import prodly.reports.ReportsUI;
+import prodly.analytics.AnalyticsDashboard;
+import prodly.search.SearchUI;
+import prodly.backup.BackupRestoreUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,6 +24,10 @@ public class AdminDashboard extends JFrame {
     private JButton viewAuditButton;
     private JButton systemSettingsButton;
     private JButton userManagementButton;
+    private JButton reportsButton;
+    private JButton analyticsButton;
+    private JButton searchButton;
+    private JButton backupButton;
     
     public AdminDashboard(String username, String role) {
         this.username = username;
@@ -48,10 +56,18 @@ public class AdminDashboard extends JFrame {
         viewAuditButton = new JButton("View Audit Logs");
         systemSettingsButton = new JButton("System Settings");
         userManagementButton = new JButton("User Management");
+        reportsButton = new JButton("Reports & Analytics");
+        analyticsButton = new JButton("Analytics Dashboard");
+        searchButton = new JButton("Search");
+        backupButton = new JButton("Backup & Restore");
         
         styleButton(viewAuditButton, new Color(70, 130, 180));
         styleButton(systemSettingsButton, new Color(60, 179, 113));
         styleButton(userManagementButton, new Color(255, 140, 0));
+        styleButton(reportsButton, new Color(138, 43, 226));
+        styleButton(analyticsButton, new Color(30, 144, 255));
+        styleButton(searchButton, new Color(72, 61, 139));
+        styleButton(backupButton, new Color(34, 139, 34));
     }
     
     private void styleButton(JButton button, Color bgColor) {
@@ -77,7 +93,7 @@ public class AdminDashboard extends JFrame {
         centerPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.insets = new Insets(10, 15, 10, 15);
         gbc.gridx = 0; gbc.gridy = 0;
         centerPanel.add(viewAuditButton, gbc);
         
@@ -86,6 +102,18 @@ public class AdminDashboard extends JFrame {
         
         gbc.gridy = 2;
         centerPanel.add(userManagementButton, gbc);
+        
+        gbc.gridy = 3;
+        centerPanel.add(reportsButton, gbc);
+        
+        gbc.gridy = 4;
+        centerPanel.add(analyticsButton, gbc);
+        
+        gbc.gridy = 5;
+        centerPanel.add(searchButton, gbc);
+        
+        gbc.gridy = 6;
+        centerPanel.add(backupButton, gbc);
         
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
@@ -102,6 +130,22 @@ public class AdminDashboard extends JFrame {
         
         userManagementButton.addActionListener(e -> {
             new UserManagementUI(username, role).setVisible(true);
+        });
+        
+        reportsButton.addActionListener(e -> {
+            new ReportsUI(username, role).setVisible(true);
+        });
+        
+        analyticsButton.addActionListener(e -> {
+            new AnalyticsDashboard(username, role).setVisible(true);
+        });
+        
+        searchButton.addActionListener(e -> {
+            new SearchUI(username, role).setVisible(true);
+        });
+        
+        backupButton.addActionListener(e -> {
+            new BackupRestoreUI(username, role).setVisible(true);
         });
     }
 }

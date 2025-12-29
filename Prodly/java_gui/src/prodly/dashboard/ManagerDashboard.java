@@ -4,6 +4,9 @@ import prodly.integration.InputWriter;
 import prodly.integration.CppRunner;
 import prodly.integration.OutputReader;
 import prodly.manager.ManagerDashboardUI;
+import prodly.reports.ReportsUI;
+import prodly.analytics.AnalyticsDashboard;
+import prodly.search.SearchUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +28,9 @@ public class ManagerDashboard extends JFrame {
     private DefaultTableModel teamModel;
     private JButton refreshButton;
     private JButton viewDetailsButton;
+    private JButton reportsButton;
+    private JButton analyticsButton;
+    private JButton searchButton;
     
     public ManagerDashboard(String username, String role) {
         this.username = username;
@@ -80,9 +86,15 @@ public class ManagerDashboard extends JFrame {
         
         refreshButton = new JButton("Refresh");
         viewDetailsButton = new JButton("View Detailed Analytics");
+        reportsButton = new JButton("Reports & Analytics");
+        analyticsButton = new JButton("Analytics Dashboard");
+        searchButton = new JButton("Search");
         
         styleButton(refreshButton, new Color(70, 130, 180));
         styleButton(viewDetailsButton, new Color(255, 140, 0));
+        styleButton(reportsButton, new Color(138, 43, 226));
+        styleButton(analyticsButton, new Color(30, 144, 255));
+        styleButton(searchButton, new Color(72, 61, 139));
     }
     
     private void styleButton(JButton button, Color bgColor) {
@@ -138,6 +150,9 @@ public class ManagerDashboard extends JFrame {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         buttonPanel.add(refreshButton);
         buttonPanel.add(viewDetailsButton);
+        buttonPanel.add(reportsButton);
+        buttonPanel.add(analyticsButton);
+        buttonPanel.add(searchButton);
         
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
@@ -149,6 +164,18 @@ public class ManagerDashboard extends JFrame {
         
         viewDetailsButton.addActionListener(e -> {
             new ManagerDashboardUI(username, role).setVisible(true);
+        });
+        
+        reportsButton.addActionListener(e -> {
+            new ReportsUI(username, role).setVisible(true);
+        });
+        
+        analyticsButton.addActionListener(e -> {
+            new AnalyticsDashboard(username, role).setVisible(true);
+        });
+        
+        searchButton.addActionListener(e -> {
+            new SearchUI(username, role).setVisible(true);
         });
     }
     

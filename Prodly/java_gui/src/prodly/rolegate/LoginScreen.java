@@ -250,8 +250,14 @@ public class LoginScreen extends JFrame {
             String status = (String) response.get("status");
             
             if ("success".equals(status)) {
-                statusLabel.setText("Account created successfully! Please login.");
+                statusLabel.setText("Account created successfully! Logging in...");
                 statusLabel.setForeground(new Color(60, 179, 113));
+                
+                // Automatically log in the newly created user
+                SwingUtilities.invokeLater(() -> {
+                    // Use the role from signup and login automatically
+                    openDashboard(role, username);
+                });
             } else {
                 String message = (String) response.get("message");
                 statusLabel.setText(message != null ? message : "Signup failed");

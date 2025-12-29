@@ -7,41 +7,50 @@ public class CppRunner {
     public static void runCore() throws Exception {
         // Determine executable path based on OS
         String os = System.getProperty("os.name").toLowerCase();
-        String exePath;
+        String exeName;
         
         if (os.contains("win")) {
-            // Windows
-            exePath = ".." + File.separator + "cpp_core" + File.separator + "prodly_core.exe";
+            exeName = "prodly_core.exe";
         } else {
-            // Linux/Mac
-            exePath = ".." + File.separator + "cpp_core" + File.separator + "prodly_core";
+            exeName = "prodly_core";
         }
         
-        File exeFile = new File(exePath);
-        if (!exeFile.exists()) {
-            // Try alternative path
-            exePath = "cpp_core" + File.separator + "prodly_core.exe";
-            exeFile = new File(exePath);
-        }
+        // Get current working directory
+        File currentDir = new File(System.getProperty("user.dir"));
+        File exeFile = null;
+        File workingDir = null;
         
-        // Get absolute path to executable
-        if (!exeFile.isAbsolute()) {
-            // Make path relative to current working directory (java_gui)
-            File currentDir = new File(System.getProperty("user.dir"));
-            if (currentDir.getName().equals("java_gui")) {
-                // We're in java_gui, so go up one level
-                exeFile = new File(currentDir.getParent(), exePath);
-            } else {
-                exeFile = new File(currentDir, exePath);
+        // Try multiple possible locations
+        if (currentDir.getName().equals("java_gui")) {
+            // We're in java_gui directory
+            File parentDir = currentDir.getParentFile();
+            exeFile = new File(parentDir, "cpp_core" + File.separator + exeName);
+            workingDir = parentDir; // Prodly directory
+        } else if (currentDir.getName().equals("Prodly")) {
+            // We're in Prodly directory
+            exeFile = new File(currentDir, "cpp_core" + File.separator + exeName);
+            workingDir = currentDir;
+        } else {
+            // Try relative to current directory
+            exeFile = new File("cpp_core" + File.separator + exeName);
+            if (!exeFile.exists()) {
+                exeFile = new File(".." + File.separator + "cpp_core" + File.separator + exeName);
             }
+            workingDir = new File(".");
         }
         
-        // Set working directory to parent of cpp_core (Prodly directory)
-        // This is where C++ expects input.json and output.json
-        File workingDir = exeFile.getParentFile().getParentFile();
+        // Verify executable exists
+        if (!exeFile.exists() || !exeFile.isFile()) {
+            throw new Exception("C++ executable not found at: " + exeFile.getAbsolutePath() + 
+                "\nPlease compile the C++ core first using: cd cpp_core && g++ -std=c++11 -I./include src/*.cpp main.cpp -o " + exeName);
+        }
         
-        ProcessBuilder pb = new ProcessBuilder(exeFile.getAbsolutePath());
-        pb.directory(workingDir);
+        // Use absolute paths
+        String absoluteExePath = exeFile.getAbsolutePath();
+        String absoluteWorkingDir = workingDir.getAbsolutePath();
+        
+        ProcessBuilder pb = new ProcessBuilder(absoluteExePath);
+        pb.directory(new File(absoluteWorkingDir));
         pb.redirectErrorStream(true);
         Process p = pb.start();
         p.waitFor();
