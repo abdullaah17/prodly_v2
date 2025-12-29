@@ -106,9 +106,16 @@ string buildJSON(const map<string, string>& data) {
 }
 
 int main() {
-    // File paths - relative to cpp_core directory
-    ifstream input("../input.json");
-    ofstream output("../output.json");
+    // File paths - try current directory first, then parent directory
+    ifstream input("input.json");
+    if (!input.is_open()) {
+        input.open("../input.json");
+    }
+    
+    ofstream output("output.json");
+    if (!output.is_open()) {
+        output.open("../output.json");
+    }
 
     if (!input.is_open()) {
         output << "{\"status\":\"error\",\"message\":\"input.json not found\"}";
