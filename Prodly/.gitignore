@@ -1,0 +1,68 @@
+# Compiled C++ files
+*.exe
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+
+# Compiled Java files
+*.class
+*.jar
+*.war
+*.ear
+
+# Build directories
+build/
+dist/
+bin/
+out/
+target/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# IPC files (can be regenerated)
+input.json
+output.json
+*.json.bak
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Audit logs (if generated)
+audit.txt
+integration/output/
+
+# User data (if stored locally)
+users.dat
+data/
+
