@@ -13,6 +13,7 @@
 #include "include/UpskillEngine.h"
 #include "include/RoleGateEngine.h"
 #include "include/AuditEngine.h"
+#include "include/SystemSettings.h"
 
 using namespace std;
 
@@ -296,6 +297,121 @@ int main() {
         
         response["status"] = "success";
         response["count"] = to_string(recommendations.size());
+        
+    } else if (action == "list_users") {
+        AuthEngine auth;
+        auto users = auth.getAllUsers();
+        
+        response["status"] = "success";
+        response["total"] = to_string(auth.getUserCount());
+        response["employees"] = to_string(auth.getUserCountByRole("employee"));
+        response["managers"] = to_string(auth.getUserCountByRole("manager"));
+        response["admins"] = to_string(auth.getUserCountByRole("admin"));
+        
+        // Build users array
+        stringstream usersJson;
+        usersJson << "[";
+        for (size_t i = 0; i < users.size(); i++) {
+            if (i > 0) usersJson << ",";
+            usersJson << "{";
+            usersJson << "\"username\":\"" << users[i].first << "\",";
+            usersJson << "\"role\":\"" << users[i].second.role << "\",";
+            usersJson << "\"created\":\"" << users[i].second.createdAt << "\"";
+            usersJson << "}";
+        }
+        usersJson << "]";
+        response["users"] = usersJson.str();
+        
+    } else if (action == "delete_user") {
+        string username = extractValue(json, "username");
+        
+        AuthEngine auth;
+        string message;
+        bool success = auth.deleteUser(username, message);
+        
+        if (success) {
+            response["status"] = "success";
+            response["message"] = message;
+        } else {
+            response["status"] = "error";
+            response["message"] = message;
+        }
+        
+    } else if (action == "update_user_role") {
+        string username = extractValue(json, "username");
+        string newRole = extractValue(json, "role");
+        
+        AuthEngine auth;
+        string message;
+        bool success = auth.updateUserRole(username, newRole, message);
+        
+        if (success) {
+            response["status"] = "success";
+            response["message"] = message;
+        } else {
+            response["status"] = "error";
+            response["message"] = message;
+        }
+        
+    } else if (action == "update_user_password") {
+        string username = extractValue(json, "username");
+        string newPassword = extractValue(json, "password");
+        
+        AuthEngine auth;
+        string message;
+        bool success = auth.updateUserPassword(username, newPassword, message);
+        
+        if (success) {
+            response["status"] = "success";
+            response["message"] = message;
+        } else {
+            response["status"] = "error";
+            response["message"] = message;
+        }
+        
+    } else if (action == "get_system_settings") {
+        SystemSettings settings;
+        
+        response["status"] = "success";
+        response["minPasswordLength"] = to_string(settings.getMinPasswordLength());
+        response["sessionTimeout"] = to_string(settings.getSessionTimeout());
+        response["requireStrongPassword"] = settings.getRequireStrongPassword() ? "true" : "false";
+        response["enableAuditLog"] = settings.getEnableAuditLog() ? "true" : "false";
+        response["defaultRole"] = settings.getDefaultRole();
+        response["version"] = settings.getVersion();
+        response["lastBackup"] = settings.getLastBackup();
+        
+        // Get user count
+        AuthEngine auth;
+        response["totalUsers"] = to_string(auth.getUserCount());
+        
+    } else if (action == "update_system_settings") {
+        SystemSettings settings;
+        
+        string minPasswordStr = extractValue(json, "minPasswordLength");
+        string sessionTimeoutStr = extractValue(json, "sessionTimeout");
+        string requireStrongStr = extractValue(json, "requireStrongPassword");
+        string enableAuditStr = extractValue(json, "enableAuditLog");
+        string defaultRole = extractValue(json, "defaultRole");
+        
+        if (!minPasswordStr.empty()) {
+            settings.setMinPasswordLength(stoi(minPasswordStr));
+        }
+        if (!sessionTimeoutStr.empty()) {
+            settings.setSessionTimeout(stoi(sessionTimeoutStr));
+        }
+        if (!requireStrongStr.empty()) {
+            settings.setRequireStrongPassword(requireStrongStr == "true");
+        }
+        if (!enableAuditStr.empty()) {
+            settings.setEnableAuditLog(enableAuditStr == "true");
+        }
+        if (!defaultRole.empty()) {
+            settings.setDefaultRole(defaultRole);
+        }
+        
+        response["status"] = "success";
+        response["message"] = "Settings updated successfully";
         
     } else {
         response["status"] = "error";

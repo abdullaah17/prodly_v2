@@ -4,6 +4,8 @@ import prodly.integration.InputWriter;
 import prodly.integration.CppRunner;
 import prodly.integration.OutputReader;
 import prodly.audit.AuditLogUI;
+import prodly.admin.UserManagementUI;
+import prodly.admin.SystemSettingsUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -95,17 +97,11 @@ public class AdminDashboard extends JFrame {
         });
         
         systemSettingsButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this,
-                "System Settings - Coming Soon",
-                "Info",
-                JOptionPane.INFORMATION_MESSAGE);
+            new SystemSettingsUI(username, role).setVisible(true);
         });
         
         userManagementButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this,
-                "User Management - Coming Soon",
-                "Info",
-                JOptionPane.INFORMATION_MESSAGE);
+            new UserManagementUI(username, role).setVisible(true);
         });
     }
 }
