@@ -1,24 +1,33 @@
+#include <iostream>
 #include <fstream>
-#include <vector>
-#include "EvaluationEngine.h"
-#include "LevelingEngine.h"
-#include "RoleGateEngine.h"
+#include <string>
+
+using namespace std;
 
 int main() {
-    std::ifstream in("integration/input/input.txt");
-    int a,b,c;
-    in >> a >> b >> c;
-    in.close();
+    ifstream input("input.json");
+    ofstream output("output.json");
 
-    EvaluationEngine eval;
-    auto scores = eval.evaluate({a,b,c});
+    if (!input.is_open()) {
+        output << "{ \"status\": \"error\", \"message\": \"input.json not found\" }";
+        return 1;
+    }
 
-    LevelingEngine leveler;
-    int level = leveler.assignLevel(scores);
+    string line, content;
+    while (getline(input, line)) {
+        content += line;
+    }
 
-    std::ofstream out("integration/output/result.txt");
-    out << level;
-    out.close();
+    input.close();
+
+    // Temporary logic (will be replaced by real engines)
+    output << "{";
+    output << "\"status\": \"success\",";
+    output << "\"received\": \"" << content << "\",";
+    output << "\"message\": \"C++ core processed request\"";
+    output << "}";
+
+    output.close();
 
     return 0;
 }

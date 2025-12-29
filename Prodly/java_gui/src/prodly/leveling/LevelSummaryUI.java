@@ -1,26 +1,32 @@
 package prodly.leveling;
 
-import prodly.rolegate.RoleGateUI;
-
 import javax.swing.*;
+import java.awt.*;
 
+/**
+ * Displays a summary of the employee's current level
+ * and readiness status.
+ */
 public class LevelSummaryUI extends JFrame {
 
-    public LevelSummaryUI(int level) {
-        setTitle("Level Summary");
+    public LevelSummaryUI(int level, boolean eligible) {
+        setTitle("Prodly – Level Summary");
+        setSize(400, 250);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout(10, 10));
 
-        JLabel label = new JLabel("Assigned Level: L" + level, SwingConstants.CENTER);
-        JButton next = new JButton("Continue to Role Selection");
+        JTextArea summary = new JTextArea();
+        summary.setEditable(false);
 
-        next.addActionListener(e -> {
-            dispose();
-            new RoleGateUI(level);
-        });
+        summary.setText(
+            "Level Evaluation Summary\n" +
+            "------------------------\n" +
+            "Assigned Level: L" + level + "\n" +
+            "Eligibility Status: " + (eligible ? "ELIGIBLE" : "NOT ELIGIBLE") + "\n"
+        );
 
-        add(label, "Center");
-        add(next, "South");
+        add(new JScrollPane(summary), BorderLayout.CENTER);
 
-        setSize(300,150);
         setVisible(true);
     }
 }

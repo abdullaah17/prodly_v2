@@ -1,23 +1,28 @@
 package prodly.audit;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
 
-public class AuditLogUI extends VBox {
+public class AuditLogUI extends JFrame {
 
     public AuditLogUI() {
-        setPadding(new Insets(30));
+        setTitle("Prodly – Audit Logs");
+        setSize(500, 350);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout(10, 10));
 
-        TextArea log = new TextArea();
+        JTextArea log = new JTextArea();
         log.setEditable(false);
-        log.setText("""
-        [10:02] Evaluation completed
-        [10:04] Level assigned: L3
-        [10:06] Role approved
-        [10:20] Task completed: Orientation
-        """);
+        log.setText(
+            "[10:02] Evaluation completed\n" +
+            "[10:04] Level assigned\n" +
+            "[10:06] Role approved\n" +
+            "[10:20] Task completed: Orientation\n"
+        );
 
-        getChildren().add(log);
+        JScrollPane scrollPane = new JScrollPane(log);
+        add(scrollPane, BorderLayout.CENTER);
+
+        setVisible(true);
     }
 }

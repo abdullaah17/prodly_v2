@@ -1,38 +1,50 @@
 package prodly.evaluation;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
 
-public class AssessmentUI extends VBox {
+public class AssessmentUI extends JFrame {
+
+    private JTextField dsa = new JTextField();
+    private JTextField oop = new JTextField();
+    private JTextField db  = new JTextField();
+    private JTextArea output = new JTextArea(6, 30);
 
     public AssessmentUI() {
-        setPadding(new Insets(30));
-        setSpacing(20);
+        setTitle("Prodly – Evaluation");
+        setSize(420, 320);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout(10,10));
 
-        Label title = new Label("Employee Skill Evaluation");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        JPanel form = new JPanel(new GridLayout(4, 2, 8, 8));
+        form.add(new JLabel("DSA Score"));
+        form.add(dsa);
+        form.add(new JLabel("OOP Score"));
+        form.add(oop);
+        form.add(new JLabel("DB Score"));
+        form.add(db);
 
-        GridPane form = new GridPane();
-        form.setHgap(20);
-        form.setVgap(15);
+        JButton eval = new JButton("Evaluate");
+        form.add(eval);
 
-        TextField dsa = new TextField();
-        TextField oop = new TextField();
-        TextField db  = new TextField();
+        add(form, BorderLayout.NORTH);
+        add(new JScrollPane(output), BorderLayout.CENTER);
 
-        form.addRow(0, new Label("DSA Score"), dsa);
-        form.addRow(1, new Label("OOP Score"), oop);
-        form.addRow(2, new Label("DB Score"), db);
+        eval.addActionListener(e -> evaluate());
 
-        Button evaluate = new Button("Evaluate");
-        Label result = new Label();
+        setVisible(true);
+    }
 
-        evaluate.setOnAction(e ->
-            result.setText("Assigned Level: L3  |  Status: Eligible")
+    private void evaluate() {
+        int dsaScore = Integer.parseInt(dsa.getText());
+        int oopScore = Integer.parseInt(oop.getText());
+        int dbScore  = Integer.parseInt(db.getText());
+
+        int level = (dsaScore + oopScore + dbScore) / 30;
+
+        output.setText(
+            "Evaluation Complete\n" +
+            "Assigned Level: L" + level
         );
-
-        getChildren().addAll(title, form, evaluate, result);
     }
 }

@@ -1,21 +1,23 @@
 package prodly;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import prodly.integration.AppShell;
+import prodly.integration.InputWriter;
+import prodly.integration.CppRunner;
+import prodly.integration.OutputReader;
 
-public class Main extends Application {
-
-    @Override
-    public void start(Stage stage) {
-        Scene scene = new Scene(AppShell.create(), 1350, 850);
-        stage.setTitle("Prodly – B2B Onboarding Platform");
-        stage.setScene(scene);
-        stage.show();
-    }
-
+public class Main {
     public static void main(String[] args) {
-        launch(args);
+        try {
+            String inputJson = "{ \"action\": \"ping\", \"source\": \"Java GUI\" }";
+
+            InputWriter.write(inputJson);
+            CppRunner.runCore();
+            String response = OutputReader.read();
+
+            System.out.println("C++ Response:");
+            System.out.println(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
