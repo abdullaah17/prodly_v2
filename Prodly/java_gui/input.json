@@ -1,1 +1,5 @@
-{ "action": "ping", "source": "Java GUI" }
+{
+  "action": "login",
+  "username": "admin",
+  "password": "admin123"
+}

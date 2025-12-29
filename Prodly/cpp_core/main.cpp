@@ -7,10 +7,6 @@
 
 using namespace std;
 
-/*
-  Simple JSON value extractor
-  NOTE: This is intentional (no external libraries allowed)
-*/
 string extractValue(const string& json, const string& key) {
     size_t pos = json.find("\"" + key + "\"");
     if (pos == string::npos) return "";
@@ -21,23 +17,23 @@ string extractValue(const string& json, const string& key) {
 }
 
 int main() {
+    // 🔴 ABSOLUTE TRUTH: where files are opened
     ifstream input("../input.json");
-ofstream output("../output.json");
+    ofstream output("../output.json");
 
-
+    // 🔎 HARD PROOF CHECK
     if (!input.is_open()) {
         output << "{ \"status\": \"error\", \"message\": \"input.json not found\" }";
-        return 1;
+        output.close();
+        return 0;
     }
 
-    // Read full JSON
     string json, line;
     while (getline(input, line)) {
         json += line;
     }
     input.close();
 
-    // Extract common fields
     string action   = extractValue(json, "action");
     string username = extractValue(json, "username");
     string password = extractValue(json, "password");
@@ -46,60 +42,37 @@ ofstream output("../output.json");
     AuthEngine auth;
     string message;
 
-    // ---------------- SIGNUP ----------------
-    if (action == "signup") {
-
-        bool success = auth.signup(username, password, role, message);
-
-        output << "{ "
-               << "\"status\": \"" << (success ? "success" : "error") << "\", "
-               << "\"message\": \"" << message << "\" "
-               << "}";
-
-    }
-    // ---------------- LOGIN ----------------
-    else if (action == "login") {
-
+    if (action == "login") {
         string userRole;
         bool success = auth.login(username, password, userRole, message);
 
         if (!success) {
-            output << "{ "
-                   << "\"status\": \"error\", "
-                   << "\"message\": \"" << message << "\" "
-                   << "}";
+            output << "{ \"status\": \"error\", \"message\": \"" << message << "\" }";
         } else {
-
-            // 🔹 ONBOARDING ENGINE STARTS HERE
             OnboardingEngine engine(userRole);
-            vector<Task> tasks = engine.getAvailableTasks();
+
+            auto tasks = engine.getAvailableTasks();
             int completion = engine.getCompletionPercent();
 
-            output << "{ ";
-            output << "\"status\": \"success\", ";
-            output << "\"role\": \"" << userRole << "\", ";
-            output << "\"completion\": " << completion << ", ";
-            output << "\"tasks\": [";
+            output << "{";
+            output << "\"status\":\"success\",";
+            output << "\"role\":\"" << userRole << "\",";
+            output << "\"completion\":" << completion << ",";
+            output << "\"tasks\":[";
 
             for (size_t i = 0; i < tasks.size(); i++) {
-                output << "{ "
-                       << "\"id\": \"" << tasks[i].id << "\", "
-                       << "\"name\": \"" << tasks[i].name << "\" "
-                       << "}";
-                if (i != tasks.size() - 1)
-                    output << ", ";
+                output << "{";
+                output << "\"id\":\"" << tasks[i].id << "\",";
+                output << "\"name\":\"" << tasks[i].name << "\"";
+                output << "}";
+                if (i != tasks.size() - 1) output << ",";
             }
 
-            output << "] ";
+            output << "]";
             output << "}";
         }
-    }
-    // ---------------- UNKNOWN ACTION ----------------
-    else {
-        output << "{ "
-               << "\"status\": \"error\", "
-               << "\"message\": \"Unknown action\" "
-               << "}";
+    } else {
+        output << "{ \"status\": \"error\", \"message\": \"Unknown action\" }";
     }
 
     output.close();

@@ -13,12 +13,12 @@ struct User {
 
 class AuthEngine {
 private:
-    unordered_map<string, User> users; // Hash Table
+    unordered_map<string, User> users;
 
 public:
     AuthEngine();
-    bool signup(const string& username, const string& password, const string& role, string& message);
-    bool login(const string& username, const string& password, string& role, string& message);
+    bool signup(const string&, const string&, const string&, string&);
+    bool login(const string&, const string&, string&, string&);
 };
 
 #endif
