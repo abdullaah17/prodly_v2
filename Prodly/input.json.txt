@@ -1,0 +1,6 @@
+{
+  "action": "signup",
+  "username": "ali",
+  "password": "1234",
+  "role": "employee"
+}
