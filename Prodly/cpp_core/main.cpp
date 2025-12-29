@@ -24,6 +24,7 @@ int main() {
     ifstream input("input.json");
     ofstream output("output.json");
 
+
     if (!input.is_open()) {
         output << "{ \"status\": \"error\", \"message\": \"input.json not found\" }";
         return 1;
