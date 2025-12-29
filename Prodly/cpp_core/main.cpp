@@ -21,8 +21,8 @@ string extractValue(const string& json, const string& key) {
 }
 
 int main() {
-    ifstream input("input.json");
-    ofstream output("output.json");
+    ifstream input("../input.json");
+ofstream output("../output.json");
 
 
     if (!input.is_open()) {
