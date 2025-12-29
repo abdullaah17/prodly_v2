@@ -1,1 +1,1 @@
-{"message":"Invalid credentials","status":"error"}
+{"admins":1,"employees":0,"managers":0,"status":"success","total":1,"users":[{"username":"admin","role":"admin","created":""}]}
