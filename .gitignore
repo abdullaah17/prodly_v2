@@ -1,0 +1,13 @@
+# C++ build files
+cpp_core/build/
+cpp_core/*.exe
+cpp_core/*.o
+
+# Java / NetBeans
+java_gui/build/
+java_gui/dist/
+java_gui/nbproject/private/
+
+# OS junk
+.DS_Store
+Thumbs.db
