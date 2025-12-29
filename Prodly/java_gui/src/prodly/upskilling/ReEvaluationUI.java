@@ -14,7 +14,8 @@ public class ReEvaluationUI extends JFrame {
 
         next.addActionListener(e -> {
             dispose();
-            new ManagerDashboardUI();
+            // Note: Would need username and role in real implementation
+            // For now, just close the window
         });
 
         add(label, "Center");
