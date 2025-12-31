@@ -6,6 +6,7 @@ import prodly.integration.OutputReader;
 import prodly.dashboard.EmployeeDashboard;
 import prodly.dashboard.ManagerDashboard;
 import prodly.dashboard.AdminDashboard;
+import prodly.ui.ModernTheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,7 @@ public class LoginScreen extends JFrame {
     public LoginScreen() {
         setTitle("Prodly - Role-Based Onboarding System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 600);
+        setSize(520, 650);
         setLocationRelativeTo(null);
         setResizable(false);
         
@@ -50,103 +51,117 @@ public class LoginScreen extends JFrame {
         loginButton = new JButton("Login");
         signupButton = new JButton("Sign Up");
         statusLabel = new JLabel(" ");
-        statusLabel.setForeground(Color.RED);
+        statusLabel.setForeground(ModernTheme.ERROR);
+        statusLabel.setFont(ModernTheme.FONT_BODY);
         
-        // Style buttons
-        loginButton.setBackground(new Color(70, 130, 180));
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setFocusPainted(false);
-        loginButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        // Apply modern styling
+        ModernTheme.styleTextField(usernameField);
+        ModernTheme.stylePasswordField(passwordField);
+        ModernTheme.styleModernButton(loginButton, ModernTheme.PRIMARY);
+        ModernTheme.styleModernButton(signupButton, ModernTheme.ACCENT);
         
-        signupButton.setBackground(new Color(60, 179, 113));
-        signupButton.setForeground(Color.WHITE);
-        signupButton.setFocusPainted(false);
-        signupButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        // Style combo box
+        roleCombo.setFont(ModernTheme.FONT_BODY);
+        roleCombo.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
+            BorderFactory.createEmptyBorder(8, 10, 8, 10)
+        ));
+        roleCombo.setBackground(ModernTheme.SURFACE);
     }
     
     private void layoutComponents() {
+        getContentPane().setBackground(ModernTheme.BACKGROUND);
         setLayout(new BorderLayout());
         
-        // Header
+        // Header with modern gradient effect
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(25, 25, 112));
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
-        
-        JLabel titleLabel = new JLabel("PRODLY");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(Color.WHITE);
-        headerPanel.add(titleLabel);
-        
-        JLabel subtitleLabel = new JLabel("Role-Based Onboarding Engine");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(new Color(200, 200, 200));
-        headerPanel.add(subtitleLabel);
+        headerPanel.setBackground(ModernTheme.PRIMARY);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_XLARGE, 
+            ModernTheme.PADDING_LARGE, ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_LARGE));
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         
-        // Form panel
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(Color.WHITE);
-        formPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+        JLabel titleLabel = new JLabel("PRODLY");
+        titleLabel.setFont(ModernTheme.FONT_TITLE);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(titleLabel);
+        
+        headerPanel.add(Box.createVerticalStrut(8));
+        
+        JLabel subtitleLabel = new JLabel("Role-Based Onboarding Engine");
+        subtitleLabel.setFont(ModernTheme.FONT_SUBTITLE);
+        subtitleLabel.setForeground(new Color(255, 255, 255, 200));
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(subtitleLabel);
+        
+        // Form panel with card style
+        JPanel formPanel = ModernTheme.createCardPanel();
+        formPanel.setLayout(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
+            BorderFactory.createEmptyBorder(ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_XLARGE, 
+                ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_XLARGE)
+        ));
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, 
+            ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM);
         gbc.anchor = GridBagConstraints.WEST;
         
         // Username
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
         JLabel userLabel = new JLabel("Username:");
-        userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        ModernTheme.styleLabel(userLabel, false);
         formPanel.add(userLabel, gbc);
         
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        usernameField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        usernameField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)
-        ));
+        usernameField.setPreferredSize(new Dimension(250, 0));
         formPanel.add(usernameField, gbc);
         
         // Password
         gbc.gridx = 0; gbc.gridy = 1; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
         JLabel passLabel = new JLabel("Password:");
-        passLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        ModernTheme.styleLabel(passLabel, false);
         formPanel.add(passLabel, gbc);
         
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        passwordField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)
-        ));
+        passwordField.setPreferredSize(new Dimension(250, 0));
         formPanel.add(passwordField, gbc);
         
         // Role (for signup)
         gbc.gridx = 0; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
         JLabel roleLabel = new JLabel("Role:");
-        roleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        ModernTheme.styleLabel(roleLabel, false);
         formPanel.add(roleLabel, gbc);
         
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        roleCombo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        roleCombo.setPreferredSize(new Dimension(250, 0));
         formPanel.add(roleCombo, gbc);
         
         // Status label
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, 0, ModernTheme.PADDING_SMALL, 0);
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         formPanel.add(statusLabel, gbc);
         
         // Buttons
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 0.5;
-        signupButton.setPreferredSize(new Dimension(0, 40));
+        gbc.weightx = 0.5; gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, 
+            ModernTheme.PADDING_SMALL, 0, ModernTheme.PADDING_SMALL);
         formPanel.add(signupButton, gbc);
         
         gbc.gridx = 1;
-        loginButton.setPreferredSize(new Dimension(0, 40));
         formPanel.add(loginButton, gbc);
         
+        // Main container
+        JPanel mainContainer = new JPanel(new BorderLayout());
+        mainContainer.setBackground(ModernTheme.BACKGROUND);
+        mainContainer.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_LARGE, 
+            ModernTheme.PADDING_LARGE, ModernTheme.PADDING_LARGE, ModernTheme.PADDING_LARGE));
+        mainContainer.add(formPanel, BorderLayout.CENTER);
+        
         add(headerPanel, BorderLayout.NORTH);
-        add(formPanel, BorderLayout.CENTER);
+        add(mainContainer, BorderLayout.CENTER);
     }
     
     private void attachListeners() {
@@ -205,7 +220,7 @@ public class LoginScreen extends JFrame {
             if ("success".equals(status)) {
                 String role = (String) response.get("role");
                 statusLabel.setText("Login successful!");
-                statusLabel.setForeground(new Color(60, 179, 113));
+                statusLabel.setForeground(ModernTheme.SUCCESS);
                 
                 // Navigate to appropriate dashboard
                 SwingUtilities.invokeLater(() -> {
@@ -214,7 +229,7 @@ public class LoginScreen extends JFrame {
             } else {
                 String message = (String) response.get("message");
                 statusLabel.setText(message != null ? message : "Login failed");
-                statusLabel.setForeground(Color.RED);
+                statusLabel.setForeground(ModernTheme.ERROR);
             }
         } catch (Exception ex) {
             statusLabel.setText("Error: " + ex.getMessage());
@@ -251,7 +266,7 @@ public class LoginScreen extends JFrame {
             
             if ("success".equals(status)) {
                 statusLabel.setText("Account created successfully! Logging in...");
-                statusLabel.setForeground(new Color(60, 179, 113));
+                statusLabel.setForeground(ModernTheme.SUCCESS);
                 
                 // Automatically log in the newly created user
                 SwingUtilities.invokeLater(() -> {
@@ -261,7 +276,7 @@ public class LoginScreen extends JFrame {
             } else {
                 String message = (String) response.get("message");
                 statusLabel.setText(message != null ? message : "Signup failed");
-                statusLabel.setForeground(Color.RED);
+                statusLabel.setForeground(ModernTheme.ERROR);
             }
         } catch (Exception ex) {
             statusLabel.setText("Error: " + ex.getMessage());

@@ -8,6 +8,7 @@ import prodly.evaluation.AssessmentUI;
 import prodly.leveling.LevelView;
 import prodly.upskilling.UpskillUI;
 import prodly.search.SearchUI;
+import prodly.ui.ModernTheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

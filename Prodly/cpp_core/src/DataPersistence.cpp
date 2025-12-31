@@ -169,3 +169,4 @@ bool DataPersistence::dataFilesExist() {
     return usersExist || settingsExist;
 }
 
+

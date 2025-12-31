@@ -10,6 +10,7 @@ import prodly.reports.ReportsUI;
 import prodly.analytics.AnalyticsDashboard;
 import prodly.search.SearchUI;
 import prodly.backup.BackupRestoreUI;
+import prodly.ui.ModernTheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -51,7 +52,8 @@ public class AdminDashboard extends JFrame {
     
     private void initializeComponents() {
         welcomeLabel = new JLabel("Admin Dashboard - " + username);
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setFont(ModernTheme.FONT_HEADING);
+        welcomeLabel.setForeground(ModernTheme.TEXT_PRIMARY);
         
         viewAuditButton = new JButton("View Audit Logs");
         systemSettingsButton = new JButton("System Settings");
@@ -61,39 +63,46 @@ public class AdminDashboard extends JFrame {
         searchButton = new JButton("Search");
         backupButton = new JButton("Backup & Restore");
         
-        styleButton(viewAuditButton, new Color(70, 130, 180));
-        styleButton(systemSettingsButton, new Color(60, 179, 113));
-        styleButton(userManagementButton, new Color(255, 140, 0));
-        styleButton(reportsButton, new Color(138, 43, 226));
-        styleButton(analyticsButton, new Color(30, 144, 255));
-        styleButton(searchButton, new Color(72, 61, 139));
-        styleButton(backupButton, new Color(34, 139, 34));
-    }
-    
-    private void styleButton(JButton button, Color bgColor) {
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setPreferredSize(new Dimension(250, 60));
+        ModernTheme.styleModernButton(viewAuditButton, ModernTheme.PRIMARY);
+        ModernTheme.styleModernButton(systemSettingsButton, ModernTheme.ACCENT);
+        ModernTheme.styleModernButton(userManagementButton, ModernTheme.ACCENT_ORANGE);
+        ModernTheme.styleModernButton(reportsButton, ModernTheme.ACCENT_PURPLE);
+        ModernTheme.styleModernButton(analyticsButton, ModernTheme.ACCENT_BLUE);
+        ModernTheme.styleModernButton(searchButton, ModernTheme.PRIMARY_LIGHT);
+        ModernTheme.styleModernButton(backupButton, ModernTheme.SUCCESS);
+        
+        // Set button sizes
+        Dimension buttonSize = new Dimension(280, 50);
+        viewAuditButton.setPreferredSize(buttonSize);
+        systemSettingsButton.setPreferredSize(buttonSize);
+        userManagementButton.setPreferredSize(buttonSize);
+        reportsButton.setPreferredSize(buttonSize);
+        analyticsButton.setPreferredSize(buttonSize);
+        searchButton.setPreferredSize(buttonSize);
+        backupButton.setPreferredSize(buttonSize);
     }
     
     private void layoutComponents() {
+        getContentPane().setBackground(ModernTheme.BACKGROUND);
         setLayout(new BorderLayout());
         
-        // Top panel
+        // Top panel with modern styling
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topPanel.setBackground(new Color(245, 245, 245));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        topPanel.setBackground(ModernTheme.PRIMARY);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_LARGE, 
+            ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_LARGE, ModernTheme.PADDING_XLARGE));
+        welcomeLabel.setForeground(Color.WHITE);
         topPanel.add(welcomeLabel);
         
-        // Center panel - Admin options
+        // Center panel - Admin options with card layout
         JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBackground(Color.WHITE);
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+        centerPanel.setBackground(ModernTheme.BACKGROUND);
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_XLARGE, 
+            ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_XLARGE));
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 15, 10, 15);
+        gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, 
+            ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM);
         gbc.gridx = 0; gbc.gridy = 0;
         centerPanel.add(viewAuditButton, gbc);
         
