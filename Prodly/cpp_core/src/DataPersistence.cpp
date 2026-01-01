@@ -1,10 +1,26 @@
 #include "../include/DataPersistence.h"
 #include <sstream>
 #include <algorithm>
+#include <iostream>
+
+#ifdef _WIN32
+#include <direct.h>
+#define MKDIR(a) _mkdir(a.c_str())
+#else
+#include <sys/stat.h>
+#define MKDIR(a) mkdir(a.c_str(), 0755)
+#endif
 
 DataPersistence::DataPersistence() {
     usersFile = "data/users.dat";
     settingsFile = "data/settings.dat";
+    
+    // Ensure data directory exists
+    #ifdef _WIN32
+    _mkdir("data");
+    #else
+    mkdir("data", 0755);
+    #endif
 }
 
 string DataPersistence::escapeString(const string& str) {
@@ -30,8 +46,16 @@ string DataPersistence::unescapeString(const string& str) {
 }
 
 bool DataPersistence::saveUsers(const unordered_map<string, UserData>& users) {
+    // Ensure data directory exists
+    #ifdef _WIN32
+    _mkdir("data");
+    #else
+    mkdir("data", 0755);
+    #endif
+    
     ofstream file(usersFile);
     if (!file.is_open()) {
+        cerr << "Error: Could not open " << usersFile << " for writing." << endl;
         return false;
     }
     

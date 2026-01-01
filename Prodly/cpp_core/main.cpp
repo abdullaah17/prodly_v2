@@ -5,6 +5,14 @@
 #include <vector>
 #include <map>
 
+#ifdef _WIN32
+#include <direct.h>
+#define MKDIR(a) _mkdir(a.c_str())
+#else
+#include <sys/stat.h>
+#define MKDIR(a) mkdir(a.c_str(), 0755)
+#endif
+
 #include "include/AuthEngine.h"
 #include "include/OnboardingEngine.h"
 #include "include/EvaluationEngine.h"
@@ -108,6 +116,13 @@ string buildJSON(const map<string, string>& data) {
 }
 
 int main() {
+    // Ensure data directory exists
+    #ifdef _WIN32
+    _mkdir("data");
+    #else
+    mkdir("data", 0755);
+    #endif
+    
     // File paths - try current directory first, then parent directory
     ifstream input("input.json");
     if (!input.is_open()) {

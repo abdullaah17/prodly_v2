@@ -60,23 +60,29 @@ public class EmployeeDashboard extends JFrame {
     
     private void initializeComponents() {
         welcomeLabel = new JLabel("Welcome, " + username + "!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setFont(ModernTheme.FONT_HEADING);
+        welcomeLabel.setForeground(ModernTheme.TEXT_PRIMARY);
         
         progressLabel = new JLabel("Progress: 0%");
-        progressLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        progressLabel.setFont(ModernTheme.FONT_BODY);
+        progressLabel.setForeground(ModernTheme.TEXT_SECONDARY);
         
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
-        progressBar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        progressBar.setForeground(new Color(60, 179, 113));
+        progressBar.setFont(ModernTheme.FONT_SMALL);
+        progressBar.setForeground(ModernTheme.ACCENT);
+        progressBar.setBackground(ModernTheme.BORDER);
+        progressBar.setBorderPainted(false);
         
         stageLabel = new JLabel("Stage: Getting Started");
-        stageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        stageLabel.setFont(ModernTheme.FONT_BODY);
+        stageLabel.setForeground(ModernTheme.TEXT_SECONDARY);
         
         daysRemainingLabel = new JLabel("Estimated Days Remaining: -");
-        daysRemainingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        daysRemainingLabel.setFont(ModernTheme.FONT_BODY);
+        daysRemainingLabel.setForeground(ModernTheme.TEXT_SECONDARY);
         
-        // Tasks table
+        // Tasks table with modern styling
         String[] columns = {"ID", "Task Name", "Description", "Skill", "Hours", "Status"};
         tasksModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -85,10 +91,16 @@ public class EmployeeDashboard extends JFrame {
             }
         };
         tasksTable = new JTable(tasksModel);
-        tasksTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        tasksTable.setRowHeight(25);
+        tasksTable.setFont(ModernTheme.FONT_BODY);
+        tasksTable.setRowHeight(30);
         tasksTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tasksTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        tasksTable.setSelectionBackground(ModernTheme.ACCENT_BLUE);
+        tasksTable.setSelectionForeground(Color.WHITE);
+        tasksTable.setGridColor(ModernTheme.BORDER);
+        tasksTable.getTableHeader().setFont(ModernTheme.FONT_BUTTON);
+        tasksTable.getTableHeader().setBackground(ModernTheme.PRIMARY);
+        tasksTable.getTableHeader().setForeground(Color.WHITE);
+        tasksTable.setBackground(ModernTheme.SURFACE);
         
         refreshButton = new JButton("Refresh");
         completeTaskButton = new JButton("Complete Selected Task");
@@ -98,70 +110,88 @@ public class EmployeeDashboard extends JFrame {
         viewUpskillButton = new JButton("Upskill Recommendations");
         searchButton = new JButton("Search");
         
-        styleButton(refreshButton, new Color(70, 130, 180));
-        styleButton(completeTaskButton, new Color(60, 179, 113));
-        styleButton(viewOnboardingButton, new Color(255, 140, 0));
-        styleButton(viewEvaluationButton, new Color(138, 43, 226));
-        styleButton(viewLevelButton, new Color(30, 144, 255));
-        styleButton(viewUpskillButton, new Color(220, 20, 60));
-        styleButton(searchButton, new Color(72, 61, 139));
-    }
-    
-    private void styleButton(JButton button, Color bgColor) {
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setPreferredSize(new Dimension(180, 35));
+        ModernTheme.styleModernButton(refreshButton, ModernTheme.PRIMARY);
+        ModernTheme.styleModernButton(completeTaskButton, ModernTheme.ACCENT);
+        ModernTheme.styleModernButton(viewOnboardingButton, ModernTheme.ACCENT_ORANGE);
+        ModernTheme.styleModernButton(viewEvaluationButton, ModernTheme.ACCENT_PURPLE);
+        ModernTheme.styleModernButton(viewLevelButton, ModernTheme.ACCENT_BLUE);
+        ModernTheme.styleModernButton(viewUpskillButton, ModernTheme.ERROR);
+        ModernTheme.styleModernButton(searchButton, ModernTheme.PRIMARY_LIGHT);
     }
     
     private void layoutComponents() {
+        getContentPane().setBackground(ModernTheme.BACKGROUND);
         setLayout(new BorderLayout());
         
-        // Top panel - Welcome and stats
+        // Top panel - Welcome and stats with modern card
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(new Color(245, 245, 245));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        topPanel.setBackground(ModernTheme.PRIMARY);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_LARGE, 
+            ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_LARGE, ModernTheme.PADDING_XLARGE));
         
         JPanel leftTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftTop.setBackground(new Color(245, 245, 245));
+        leftTop.setBackground(ModernTheme.PRIMARY);
+        welcomeLabel.setForeground(Color.WHITE);
         leftTop.add(welcomeLabel);
         
-        JPanel rightTop = new JPanel(new GridLayout(2, 2, 10, 5));
-        rightTop.setBackground(new Color(245, 245, 245));
-        rightTop.add(progressLabel);
-        rightTop.add(stageLabel);
-        rightTop.add(daysRemainingLabel);
-        rightTop.add(new JLabel()); // Spacer
+        JPanel statsCard = ModernTheme.createCardPanel();
+        statsCard.setLayout(new GridLayout(2, 2, ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_SMALL));
+        statsCard.add(progressLabel);
+        statsCard.add(stageLabel);
+        statsCard.add(daysRemainingLabel);
+        statsCard.add(new JLabel()); // Spacer
         
         topPanel.add(leftTop, BorderLayout.WEST);
-        topPanel.add(rightTop, BorderLayout.EAST);
-        topPanel.add(progressBar, BorderLayout.SOUTH);
+        topPanel.add(statsCard, BorderLayout.EAST);
         
-        // Center panel - Tasks table
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            "Available Tasks",
-            0, 0,
-            new Font("Segoe UI", Font.BOLD, 14)
+        // Progress bar panel
+        JPanel progressPanel = new JPanel(new BorderLayout());
+        progressPanel.setBackground(ModernTheme.PRIMARY);
+        progressPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_MEDIUM, 
+            ModernTheme.PADDING_XLARGE, 0, ModernTheme.PADDING_XLARGE));
+        progressPanel.add(progressBar, BorderLayout.CENTER);
+        topPanel.add(progressPanel, BorderLayout.SOUTH);
+        
+        // Center panel - Tasks table with modern card
+        JPanel centerPanel = ModernTheme.createCardPanel();
+        centerPanel.setLayout(new BorderLayout());
+        centerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
+                "Available Tasks",
+                0, 0,
+                ModernTheme.FONT_HEADING
+            ),
+            BorderFactory.createEmptyBorder(ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, 
+                ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM)
         ));
         
         JScrollPane scrollPane = new JScrollPane(tasksTable);
         scrollPane.setPreferredSize(new Dimension(0, 300));
+        scrollPane.setBorder(BorderFactory.createLineBorder(ModernTheme.BORDER, 1));
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Button panel with modern styling
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM));
+        buttonPanel.setBackground(ModernTheme.BACKGROUND);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_MEDIUM, 
+            ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM));
         buttonPanel.add(refreshButton);
         buttonPanel.add(completeTaskButton);
-        buttonPanel.add(new JSeparator(SwingConstants.VERTICAL));
+        
+        JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
+        sep1.setPreferredSize(new Dimension(1, 30));
+        buttonPanel.add(sep1);
+        
         buttonPanel.add(viewOnboardingButton);
         buttonPanel.add(viewEvaluationButton);
         buttonPanel.add(viewLevelButton);
         buttonPanel.add(viewUpskillButton);
-        buttonPanel.add(new JSeparator(SwingConstants.VERTICAL));
+        
+        JSeparator sep2 = new JSeparator(SwingConstants.VERTICAL);
+        sep2.setPreferredSize(new Dimension(1, 30));
+        buttonPanel.add(sep2);
+        
         buttonPanel.add(searchButton);
         
         add(topPanel, BorderLayout.NORTH);

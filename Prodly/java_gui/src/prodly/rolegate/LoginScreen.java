@@ -7,6 +7,7 @@ import prodly.dashboard.EmployeeDashboard;
 import prodly.dashboard.ManagerDashboard;
 import prodly.dashboard.AdminDashboard;
 import prodly.ui.ModernTheme;
+import prodly.ui.components.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,14 +17,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class LoginScreen extends JFrame {
-    private JTextField usernameField;
-    private JPasswordField passwordField;
+    private ValidatedTextField usernameField;
+    private ValidatedPasswordField passwordField;
     private JComboBox<String> roleCombo;
-    private JButton loginButton;
-    private JButton signupButton;
-    private JLabel statusLabel;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
+    private ModernButton loginButton;
+    private ModernButton signupButton;
+    private LoadingOverlay loadingOverlay;
+    private JPanel formPanel;
     
     public LoginScreen() {
         setTitle("Prodly - Role-Based Onboarding System");
@@ -45,28 +45,34 @@ public class LoginScreen extends JFrame {
     }
     
     private void initializeComponents() {
-        usernameField = new JTextField(20);
-        passwordField = new JPasswordField(20);
+        // Validated fields with validation
+        usernameField = new ValidatedTextField("Username", 
+            ValidatedTextField.combine(
+                ValidatedTextField.required(),
+                ValidatedTextField.minLength(3)
+            ));
+        
+        passwordField = new ValidatedPasswordField("Password",
+            ValidatedTextField.combine(
+                ValidatedTextField.required(),
+                ValidatedTextField.minLength(6)
+            ));
+        
+        // Role combo box
         roleCombo = new JComboBox<>(new String[]{"employee", "manager", "admin"});
-        loginButton = new JButton("Login");
-        signupButton = new JButton("Sign Up");
-        statusLabel = new JLabel(" ");
-        statusLabel.setForeground(ModernTheme.ERROR);
-        statusLabel.setFont(ModernTheme.FONT_BODY);
-        
-        // Apply modern styling
-        ModernTheme.styleTextField(usernameField);
-        ModernTheme.stylePasswordField(passwordField);
-        ModernTheme.styleModernButton(loginButton, ModernTheme.PRIMARY);
-        ModernTheme.styleModernButton(signupButton, ModernTheme.ACCENT);
-        
-        // Style combo box
         roleCombo.setFont(ModernTheme.FONT_BODY);
         roleCombo.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)
+            BorderFactory.createEmptyBorder(12, 14, 12, 14)
         ));
         roleCombo.setBackground(ModernTheme.SURFACE);
+        
+        // Modern buttons
+        loginButton = ModernButton.primary("Login");
+        signupButton = ModernButton.success("Sign Up");
+        
+        // Loading overlay
+        loadingOverlay = new LoadingOverlay();
     }
     
     private void layoutComponents() {
@@ -95,63 +101,46 @@ public class LoginScreen extends JFrame {
         headerPanel.add(subtitleLabel);
         
         // Form panel with card style
-        JPanel formPanel = ModernTheme.createCardPanel();
-        formPanel.setLayout(new GridBagLayout());
+        formPanel = ModernTheme.createCardPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
             BorderFactory.createEmptyBorder(ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_XLARGE, 
                 ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_XLARGE)
         ));
         
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, 
-            ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM);
-        gbc.anchor = GridBagConstraints.WEST;
+        // Username field
+        usernameField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        usernameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, usernameField.getPreferredSize().height));
+        formPanel.add(usernameField);
+        formPanel.add(Box.createVerticalStrut(ModernTheme.PADDING_MEDIUM));
         
-        // Username
-        gbc.gridx = 0; gbc.gridy = 0; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
-        JLabel userLabel = new JLabel("Username:");
-        ModernTheme.styleLabel(userLabel, false);
-        formPanel.add(userLabel, gbc);
+        // Password field
+        passwordField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        passwordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, passwordField.getPreferredSize().height));
+        formPanel.add(passwordField);
+        formPanel.add(Box.createVerticalStrut(ModernTheme.PADDING_MEDIUM));
         
-        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        usernameField.setPreferredSize(new Dimension(250, 0));
-        formPanel.add(usernameField, gbc);
-        
-        // Password
-        gbc.gridx = 0; gbc.gridy = 1; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
-        JLabel passLabel = new JLabel("Password:");
-        ModernTheme.styleLabel(passLabel, false);
-        formPanel.add(passLabel, gbc);
-        
-        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        passwordField.setPreferredSize(new Dimension(250, 0));
-        formPanel.add(passwordField, gbc);
-        
-        // Role (for signup)
-        gbc.gridx = 0; gbc.gridy = 2; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
+        // Role combo (for signup)
+        JPanel rolePanel = new JPanel(new BorderLayout());
+        rolePanel.setOpaque(false);
         JLabel roleLabel = new JLabel("Role:");
         ModernTheme.styleLabel(roleLabel, false);
-        formPanel.add(roleLabel, gbc);
-        
-        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        roleCombo.setPreferredSize(new Dimension(250, 0));
-        formPanel.add(roleCombo, gbc);
-        
-        // Status label
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, 0, ModernTheme.PADDING_SMALL, 0);
-        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        formPanel.add(statusLabel, gbc);
+        roleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, ModernTheme.PADDING_SMALL, 0));
+        rolePanel.add(roleLabel, BorderLayout.NORTH);
+        rolePanel.add(roleCombo, BorderLayout.CENTER);
+        rolePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rolePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, rolePanel.getPreferredSize().height));
+        formPanel.add(rolePanel);
+        formPanel.add(Box.createVerticalStrut(ModernTheme.PADDING_LARGE));
         
         // Buttons
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 0.5; gbc.insets = new Insets(ModernTheme.PADDING_MEDIUM, 
-            ModernTheme.PADDING_SMALL, 0, ModernTheme.PADDING_SMALL);
-        formPanel.add(signupButton, gbc);
-        
-        gbc.gridx = 1;
-        formPanel.add(loginButton, gbc);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, ModernTheme.PADDING_SMALL, 0));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(signupButton);
+        buttonPanel.add(loginButton);
+        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formPanel.add(buttonPanel);
         
         // Main container
         JPanel mainContainer = new JPanel(new BorderLayout());
@@ -160,8 +149,20 @@ public class LoginScreen extends JFrame {
             ModernTheme.PADDING_LARGE, ModernTheme.PADDING_LARGE, ModernTheme.PADDING_LARGE));
         mainContainer.add(formPanel, BorderLayout.CENTER);
         
+        // Use layered pane for loading overlay
+        setLayout(new BorderLayout());
         add(headerPanel, BorderLayout.NORTH);
-        add(mainContainer, BorderLayout.CENTER);
+        
+        // Create layered pane for overlay
+        JLayeredPane layeredPane = getLayeredPane();
+        if (layeredPane == null) {
+            layeredPane = new JLayeredPane();
+        }
+        layeredPane.setLayout(new BorderLayout());
+        layeredPane.add(mainContainer, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.add(loadingOverlay, JLayeredPane.MODAL_LAYER);
+        loadingOverlay.setBounds(0, 0, getWidth(), getHeight());
+        add(layeredPane, BorderLayout.CENTER);
     }
     
     private void attachListeners() {
@@ -180,7 +181,7 @@ public class LoginScreen extends JFrame {
         });
         
         // Enter key support
-        passwordField.addActionListener(new ActionListener() {
+        passwordField.getPasswordField().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 performLogin();
@@ -189,100 +190,143 @@ public class LoginScreen extends JFrame {
     }
     
     private void performLogin() {
-        String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword());
+        // Validate fields
+        boolean usernameValid = usernameField.validateField();
+        boolean passwordValid = passwordField.validateField();
         
-        if (username.isEmpty() || password.isEmpty()) {
-            statusLabel.setText("Please enter username and password");
+        if (!usernameValid || !passwordValid) {
+            ToastNotification.showError(this, "Please fix the errors in the form");
             return;
         }
         
-        try {
-            // Build JSON request
-            JSONObject request = new JSONObject();
-            request.put("action", "login");
-            request.put("username", username);
-            request.put("password", password);
-            
-            // Write to input.json
-            InputWriter.write(request.toJSONString());
-            
-            // Run C++ core
-            CppRunner.runCore();
-            
-            // Read response
-            String responseStr = OutputReader.read();
-            JSONParser parser = new JSONParser();
-            JSONObject response = (JSONObject) parser.parse(responseStr);
-            
-            String status = (String) response.get("status");
-            
-            if ("success".equals(status)) {
-                String role = (String) response.get("role");
-                statusLabel.setText("Login successful!");
-                statusLabel.setForeground(ModernTheme.SUCCESS);
+        String username = usernameField.getText().trim();
+        String password = passwordField.getPassword();
+        
+        // Show loading
+        loadingOverlay.show("Logging in...");
+        loginButton.setEnabled(false);
+        signupButton.setEnabled(false);
+        
+        // Run in background thread to avoid blocking UI
+        new Thread(() -> {
+            try {
+                // Build JSON request
+                JSONObject request = new JSONObject();
+                request.put("action", "login");
+                request.put("username", username);
+                request.put("password", password);
                 
-                // Navigate to appropriate dashboard
+                // Write to input.json
+                InputWriter.write(request.toJSONString());
+                
+                // Run C++ core
+                CppRunner.runCore();
+                
+                // Read response
+                String responseStr = OutputReader.read();
+                JSONParser parser = new JSONParser();
+                JSONObject response = (JSONObject) parser.parse(responseStr);
+                
+                String status = (String) response.get("status");
+                
                 SwingUtilities.invokeLater(() -> {
-                    openDashboard(role, username);
+                    loadingOverlay.hide();
+                    loginButton.setEnabled(true);
+                    signupButton.setEnabled(true);
+                    
+                    if ("success".equals(status)) {
+                        String role = (String) response.get("role");
+                        ToastNotification.showSuccess(this, "Login successful!");
+                        
+                        // Small delay before navigation for better UX
+                        Timer delayTimer = new Timer(500, e -> {
+                            openDashboard(role, username);
+                        });
+                        delayTimer.setRepeats(false);
+                        delayTimer.start();
+                    } else {
+                        String message = (String) response.get("message");
+                        ToastNotification.showError(this, message != null ? message : "Login failed");
+                    }
                 });
-            } else {
-                String message = (String) response.get("message");
-                statusLabel.setText(message != null ? message : "Login failed");
-                statusLabel.setForeground(ModernTheme.ERROR);
+            } catch (Exception ex) {
+                SwingUtilities.invokeLater(() -> {
+                    loadingOverlay.hide();
+                    loginButton.setEnabled(true);
+                    signupButton.setEnabled(true);
+                    ToastNotification.showError(this, "Error: " + ex.getMessage());
+                    ex.printStackTrace();
+                });
             }
-        } catch (Exception ex) {
-            statusLabel.setText("Error: " + ex.getMessage());
-            statusLabel.setForeground(Color.RED);
-            ex.printStackTrace();
-        }
+        }).start();
     }
     
     private void performSignup() {
-        String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword());
-        String role = (String) roleCombo.getSelectedItem();
+        // Validate fields
+        boolean usernameValid = usernameField.validateField();
+        boolean passwordValid = passwordField.validateField();
         
-        if (username.isEmpty() || password.isEmpty()) {
-            statusLabel.setText("Please enter username and password");
+        if (!usernameValid || !passwordValid) {
+            ToastNotification.showError(this, "Please fix the errors in the form");
             return;
         }
         
-        try {
-            JSONObject request = new JSONObject();
-            request.put("action", "signup");
-            request.put("username", username);
-            request.put("password", password);
-            request.put("role", role);
-            
-            InputWriter.write(request.toJSONString());
-            CppRunner.runCore();
-            
-            String responseStr = OutputReader.read();
-            JSONParser parser = new JSONParser();
-            JSONObject response = (JSONObject) parser.parse(responseStr);
-            
-            String status = (String) response.get("status");
-            
-            if ("success".equals(status)) {
-                statusLabel.setText("Account created successfully! Logging in...");
-                statusLabel.setForeground(ModernTheme.SUCCESS);
+        String username = usernameField.getText().trim();
+        String password = passwordField.getPassword();
+        String role = (String) roleCombo.getSelectedItem();
+        
+        // Show loading
+        loadingOverlay.show("Creating account...");
+        loginButton.setEnabled(false);
+        signupButton.setEnabled(false);
+        
+        // Run in background thread
+        new Thread(() -> {
+            try {
+                JSONObject request = new JSONObject();
+                request.put("action", "signup");
+                request.put("username", username);
+                request.put("password", password);
+                request.put("role", role);
                 
-                // Automatically log in the newly created user
+                InputWriter.write(request.toJSONString());
+                CppRunner.runCore();
+                
+                String responseStr = OutputReader.read();
+                JSONParser parser = new JSONParser();
+                JSONObject response = (JSONObject) parser.parse(responseStr);
+                
+                String status = (String) response.get("status");
+                
                 SwingUtilities.invokeLater(() -> {
-                    // Use the role from signup and login automatically
-                    openDashboard(role, username);
+                    loadingOverlay.hide();
+                    loginButton.setEnabled(true);
+                    signupButton.setEnabled(true);
+                    
+                    if ("success".equals(status)) {
+                        ToastNotification.showSuccess(this, "Account created successfully! Logging in...");
+                        
+                        // Automatically log in the newly created user
+                        Timer delayTimer = new Timer(800, e -> {
+                            performLogin();
+                        });
+                        delayTimer.setRepeats(false);
+                        delayTimer.start();
+                    } else {
+                        String message = (String) response.get("message");
+                        ToastNotification.showError(this, message != null ? message : "Signup failed");
+                    }
                 });
-            } else {
-                String message = (String) response.get("message");
-                statusLabel.setText(message != null ? message : "Signup failed");
-                statusLabel.setForeground(ModernTheme.ERROR);
+            } catch (Exception ex) {
+                SwingUtilities.invokeLater(() -> {
+                    loadingOverlay.hide();
+                    loginButton.setEnabled(true);
+                    signupButton.setEnabled(true);
+                    ToastNotification.showError(this, "Error: " + ex.getMessage());
+                    ex.printStackTrace();
+                });
             }
-        } catch (Exception ex) {
-            statusLabel.setText("Error: " + ex.getMessage());
-            statusLabel.setForeground(Color.RED);
-            ex.printStackTrace();
-        }
+        }).start();
     }
     
     private void openDashboard(String role, String username) {

@@ -1,6 +1,19 @@
 #include "../include/AuthEngine.h"
 #include "../include/DataPersistence.h"
 #include <algorithm>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
+string getCurrentDate() {
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    tm* ltm = localtime(&now_c);
+    stringstream ss;
+    ss << put_time(ltm, "%Y-%m-%d");
+    return ss.str();
+}
 
 void AuthEngine::saveUsersToFile() {
     DataPersistence persistence;
@@ -11,7 +24,7 @@ void AuthEngine::saveUsersToFile() {
         UserData userData;
         userData.password = pair.second.password;
         userData.role = pair.second.role;
-        userData.createdAt = "2024-01-01"; // Default
+        userData.createdAt = pair.second.createdAt.empty() ? getCurrentDate() : pair.second.createdAt;
         userDataMap[pair.first] = userData;
     }
     
@@ -29,11 +42,18 @@ AuthEngine::AuthEngine() {
             User user;
             user.password = pair.second.password;
             user.role = pair.second.role;
+            user.createdAt = pair.second.createdAt.empty() ? getCurrentDate() : pair.second.createdAt;
             users[pair.first] = user;
         }
-    } else {
-        // Default admin user if no data file
-        users["admin"] = {"admin123", "admin"};
+    }
+    
+    // If no users loaded or admin doesn't exist, create default admin
+    if (users.empty() || users.find("admin") == users.end()) {
+        User adminUser;
+        adminUser.password = "admin123";
+        adminUser.role = "admin";
+        adminUser.createdAt = getCurrentDate();
+        users["admin"] = adminUser;
         // Save default user
         saveUsersToFile();
     }
@@ -45,7 +65,11 @@ bool AuthEngine::signup(const string& username, const string& password, const st
         return false;
     }
 
-    users[username] = {password, role};
+    User newUser;
+    newUser.password = password;
+    newUser.role = role;
+    newUser.createdAt = getCurrentDate();
+    users[username] = newUser;
     
     // Save to file
     saveUsersToFile();

@@ -7,6 +7,7 @@ import prodly.manager.ManagerDashboardUI;
 import prodly.reports.ReportsUI;
 import prodly.analytics.AnalyticsDashboard;
 import prodly.search.SearchUI;
+import prodly.ui.ModernTheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -55,22 +56,26 @@ public class ManagerDashboard extends JFrame {
     
     private void initializeComponents() {
         welcomeLabel = new JLabel("Manager Dashboard - " + username);
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setFont(ModernTheme.FONT_HEADING);
+        welcomeLabel.setForeground(ModernTheme.TEXT_PRIMARY);
         
         totalEmployeesLabel = new JLabel("Total Employees: -");
-        totalEmployeesLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        totalEmployeesLabel.setFont(ModernTheme.FONT_BODY);
+        totalEmployeesLabel.setForeground(ModernTheme.TEXT_SECONDARY);
         
         avgLevelLabel = new JLabel("Average Level: -");
-        avgLevelLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        avgLevelLabel.setFont(ModernTheme.FONT_BODY);
+        avgLevelLabel.setForeground(ModernTheme.TEXT_SECONDARY);
         
         avgProgressLabel = new JLabel("Average Progress: -");
-        avgProgressLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        avgProgressLabel.setFont(ModernTheme.FONT_BODY);
+        avgProgressLabel.setForeground(ModernTheme.TEXT_SECONDARY);
         
         atRiskLabel = new JLabel("At-Risk Employees: -");
-        atRiskLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        atRiskLabel.setForeground(new Color(220, 20, 60));
+        atRiskLabel.setFont(ModernTheme.FONT_BODY);
+        atRiskLabel.setForeground(ModernTheme.ERROR);
         
-        // Team table
+        // Team table with modern styling
         String[] columns = {"Employee ID", "Name", "Level", "Progress %", "Status"};
         teamModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -79,10 +84,16 @@ public class ManagerDashboard extends JFrame {
             }
         };
         teamTable = new JTable(teamModel);
-        teamTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        teamTable.setRowHeight(25);
+        teamTable.setFont(ModernTheme.FONT_BODY);
+        teamTable.setRowHeight(30);
         teamTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        teamTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        teamTable.setSelectionBackground(ModernTheme.ACCENT_BLUE);
+        teamTable.setSelectionForeground(Color.WHITE);
+        teamTable.setGridColor(ModernTheme.BORDER);
+        teamTable.getTableHeader().setFont(ModernTheme.FONT_BUTTON);
+        teamTable.getTableHeader().setBackground(ModernTheme.PRIMARY);
+        teamTable.getTableHeader().setForeground(Color.WHITE);
+        teamTable.setBackground(ModernTheme.SURFACE);
         
         refreshButton = new JButton("Refresh");
         viewDetailsButton = new JButton("View Detailed Analytics");
@@ -90,40 +101,39 @@ public class ManagerDashboard extends JFrame {
         analyticsButton = new JButton("Analytics Dashboard");
         searchButton = new JButton("Search");
         
-        styleButton(refreshButton, new Color(70, 130, 180));
-        styleButton(viewDetailsButton, new Color(255, 140, 0));
-        styleButton(reportsButton, new Color(138, 43, 226));
-        styleButton(analyticsButton, new Color(30, 144, 255));
-        styleButton(searchButton, new Color(72, 61, 139));
-    }
-    
-    private void styleButton(JButton button, Color bgColor) {
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setPreferredSize(new Dimension(200, 35));
+        ModernTheme.styleModernButton(refreshButton, ModernTheme.PRIMARY);
+        ModernTheme.styleModernButton(viewDetailsButton, ModernTheme.ACCENT_ORANGE);
+        ModernTheme.styleModernButton(reportsButton, ModernTheme.ACCENT_PURPLE);
+        ModernTheme.styleModernButton(analyticsButton, ModernTheme.ACCENT_BLUE);
+        ModernTheme.styleModernButton(searchButton, ModernTheme.PRIMARY_LIGHT);
     }
     
     private void layoutComponents() {
+        getContentPane().setBackground(ModernTheme.BACKGROUND);
         setLayout(new BorderLayout());
         
-        // Top panel - Stats
+        // Top panel - Stats with modern styling
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(new Color(245, 245, 245));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        topPanel.setBackground(ModernTheme.PRIMARY);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_LARGE, 
+            ModernTheme.PADDING_XLARGE, ModernTheme.PADDING_LARGE, ModernTheme.PADDING_XLARGE));
         
         JPanel leftTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftTop.setBackground(new Color(245, 245, 245));
+        leftTop.setBackground(ModernTheme.PRIMARY);
+        welcomeLabel.setForeground(Color.WHITE);
         leftTop.add(welcomeLabel);
         
-        JPanel statsPanel = new JPanel(new GridLayout(2, 2, 15, 10));
-        statsPanel.setBackground(new Color(245, 245, 245));
-        statsPanel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            "Team Statistics",
-            0, 0,
-            new Font("Segoe UI", Font.BOLD, 14)
+        JPanel statsPanel = ModernTheme.createCardPanel();
+        statsPanel.setLayout(new GridLayout(2, 2, ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM));
+        statsPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
+                "Team Statistics",
+                0, 0,
+                ModernTheme.FONT_HEADING
+            ),
+            BorderFactory.createEmptyBorder(ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, 
+                ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM)
         ));
         statsPanel.add(totalEmployeesLabel);
         statsPanel.add(avgLevelLabel);
@@ -133,21 +143,29 @@ public class ManagerDashboard extends JFrame {
         topPanel.add(leftTop, BorderLayout.WEST);
         topPanel.add(statsPanel, BorderLayout.EAST);
         
-        // Center panel - Team table
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            "Team Members",
-            0, 0,
-            new Font("Segoe UI", Font.BOLD, 14)
+        // Center panel - Team table with modern card
+        JPanel centerPanel = ModernTheme.createCardPanel();
+        centerPanel.setLayout(new BorderLayout());
+        centerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(ModernTheme.BORDER, 1),
+                "Team Members",
+                0, 0,
+                ModernTheme.FONT_HEADING
+            ),
+            BorderFactory.createEmptyBorder(ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, 
+                ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM)
         ));
         
         JScrollPane scrollPane = new JScrollPane(teamTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(ModernTheme.BORDER, 1));
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Button panel with modern styling
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM));
+        buttonPanel.setBackground(ModernTheme.BACKGROUND);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(ModernTheme.PADDING_MEDIUM, 
+            ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM, ModernTheme.PADDING_MEDIUM));
         buttonPanel.add(refreshButton);
         buttonPanel.add(viewDetailsButton);
         buttonPanel.add(reportsButton);
